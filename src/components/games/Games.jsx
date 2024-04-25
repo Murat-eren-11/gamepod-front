@@ -1,64 +1,129 @@
 import { useState, useEffect } from "react";
 import axios from "axios";
+import { Link } from "react-router-dom";
+import Searchbar from "../Searchbar/Searchbar";
+import FilterGenre from "../Filters/FilterGenres";
+import FilterPlatform from "../Filters/FilterPlatform";
+import SortGames from "../Filters/SortGames";
 
 const Games = () => {
   const [games, setGames] = useState([]);
-  const [page, setPage] = useState(1); // Initialisation de la page
+  const [page, setPage] = useState(1);
+  const [hasMore, setHasMore] = useState(true);
+  const [isLoading, setIsLoading] = useState(false);
+  const [searchQuery, setSearchQuery] = useState("");
+  const [platform, setPlatform] = useState("");
+  const [genre, setGenre] = useState("");
+  const [sortField, setSortField] = useState("");
+  const [sortOrder, setSortOrder] = useState("");
 
-  const fetchGames = async (currentPage) => {
-    try {
-      const response = await axios.get(
-        `${import.meta.env.VITE_API_URL}/games`,
-        {
-          params: { page: currentPage, page_size: 100 }, // Ajout des paramètres de pagination
-        }
-      );
-      console.log(response.data.results); // Vérifier la structure des données dans la console
-      return response.data.results; // Retourner les résultats directement
-    } catch (error) {
-      console.error("Failed to fetch games:", error);
-    }
-  };
-
-  // Charger initialement les données et charger plus lors du changement de page
   useEffect(() => {
-    fetchGames(page).then((newGames) => {
-      if (newGames) {
-        // Vérifier si newGames est non null
-        setGames((prevGames) => [...prevGames, ...newGames]);
-      }
-    });
-  }, [page]);
+    const fetchGames = async () => {
+      if (isLoading || !hasMore) return;
+      setIsLoading(true);
 
-  // Gérer le scroll infini
+      const params = {
+        page,
+        page_size: 30,
+        search: searchQuery,
+      };
+
+      if (platform) params.platforms = platform;
+      if (genre) params.genres = genre;
+      if (sortField && sortOrder) {
+        params.ordering = `${sortOrder === "asc" ? "" : "-"}${sortField}`;
+      }
+
+      try {
+        const response = await axios.get(
+          `${import.meta.env.VITE_API_URL}/games`,
+          { params }
+        );
+        const newGames = response.data.results;
+        setGames((prevGames) =>
+          page === 1 ? newGames : [...prevGames, ...newGames]
+        );
+        setHasMore(newGames.length > 0);
+      } catch (error) {
+        console.error("Failed to fetch games:", error);
+        setHasMore(false);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    fetchGames();
+  }, [page, searchQuery, platform, genre, sortField, sortOrder]);
+
   useEffect(() => {
     const handleScroll = () => {
-      if (
-        window.innerHeight + document.documentElement.scrollTop !==
-        document.documentElement.offsetHeight
-      )
-        return;
-      setPage((prevPage) => prevPage + 1);
+      const nearBottom =
+        window.innerHeight + window.scrollY >=
+        document.documentElement.scrollHeight - 100;
+      if (nearBottom && hasMore && !isLoading) {
+        setPage((prevPage) => prevPage + 1);
+      }
     };
 
     window.addEventListener("scroll", handleScroll);
-    return () => window.removeEventListener("scroll", handleScroll);
-  }, []);
+    return () => {
+      window.removeEventListener("scroll", handleScroll);
+    };
+  }, [hasMore, isLoading]);
 
   return (
-    <main>
-      <div className="flex flex-row flex-wrap gap-20">
+    <main className="m-auto">
+      <Searchbar
+        onSearch={(query) => {
+          setSearchQuery(query);
+          setPage(1);
+          setGames([]);
+        }}
+      />
+      <div className="flex justify-between mx-10">
+        <div>
+          <FilterPlatform
+            onPlatformChange={(platform) => {
+              setPlatform(platform);
+              setPage(1);
+              setGames([]);
+            }}
+          />
+          <FilterGenre
+            onGenreChange={(genre) => {
+              setGenre(genre);
+              setPage(1);
+              setGames([]);
+            }}
+          />
+        </div>
+        <div>
+          <SortGames
+            onSortChange={(field, order) => {
+              setSortField(field);
+              setSortOrder(order);
+              setPage(1);
+              setGames([]);
+            }}
+          />
+        </div>
+      </div>
+      <div className="flex flex-row flex-wrap gap-10 justify-center mt-20">
         {games.map((game, index) => (
-          <div className="flex flex-col w-150" key={index}>
-            <h3>{game.name}</h3>
-            <img
-              src={game.background_image}
-              alt={game.name}
-              onError={(e) =>
-                (e.target.src = "https://via.placeholder.com/150")
-              }
-              className="w-24"
-            />
+          <div className="flex flex-col w-150 relative text-center" key={index}>
+            <Link to={`/${game.id}`}>
+              <img
+                src={game.background_image || "https://via.placeholder.com/150"}
+                alt={game.name}
+                onError={(e) =>
+                  (e.target.src = "https://via.placeholder.com/150")
+                }
+                className="w-52 h-64 object-cover rounded-lg"
+              />
+              <p className="text-sm text-wrap max-w-52 absolute inset-x-0 bottom-0 bg-black/50 h-10 text-bold pt-2 font-bold">
+                {game.name}
+              </p>
+            </Link>
           </div>
         ))}
       </div>
