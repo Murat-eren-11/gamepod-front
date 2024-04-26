@@ -13,18 +13,26 @@ const Game = ({ token }) => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const [gameRes, collectionRes, todoRes] = await Promise.all([
-          axios.get(`${import.meta.env.VITE_API_URL}/game/${id}`, {
+        const gameRes = await axios.get(
+          `${import.meta.env.VITE_API_URL}/game/${id}`,
+          {
             headers: { Authorization: `Bearer ${token}` },
-          }),
-          axios.get(`${import.meta.env.VITE_API_URL}/collection/collection`, {
-            headers: { Authorization: `Bearer ${token}` },
-          }),
-          axios.get(`${import.meta.env.VITE_API_URL}/collection/todo`, {
-            headers: { Authorization: `Bearer ${token}` },
-          }),
-        ]);
+          }
+        );
         setGame(gameRes.data);
+        if (token) {
+          const [collectionRes, todoRes] = await Promise.all([
+            axios.get(`${import.meta.env.VITE_API_URL}/collection/collection`, {
+              headers: { Authorization: `Bearer ${token}` },
+            }),
+            axios.get(`${import.meta.env.VITE_API_URL}/collection/todo`, {
+              headers: { Authorization: `Bearer ${token}` },
+            }),
+          ]);
+          setIsInCollection(collectionRes.data.some((item) => item.id === id));
+          setIsInTodoList(todoRes.data.some((item) => item.id === id));
+        }
+
         setIsInCollection(collectionRes.data.some((item) => item.id === id));
         setIsInTodoList(todoRes.data.some((item) => item.id === id));
       } catch (error) {
@@ -36,6 +44,10 @@ const Game = ({ token }) => {
   }, [id, token]);
 
   const handleCollection = async () => {
+    if (!token) {
+      alert("Please log in to modify your collection.");
+      return;
+    }
     try {
       const method = isInCollection ? "delete" : "post";
       const url = `${import.meta.env.VITE_API_URL}${
@@ -59,6 +71,10 @@ const Game = ({ token }) => {
   };
 
   const handleTodoList = async () => {
+    if (!token) {
+      alert("Please log in to modify your todo list.");
+      return;
+    }
     try {
       const method = isInTodoList ? "delete" : "post";
       const url = `${import.meta.env.VITE_API_URL}${
