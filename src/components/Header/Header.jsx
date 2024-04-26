@@ -19,7 +19,6 @@ const Header = ({ handleToken, token }) => {
           }
         );
         const userFound = response.data;
-        console.log(userFound);
         setUsername(userFound.username);
         setAvatar(userFound.avatar);
       } catch (error) {

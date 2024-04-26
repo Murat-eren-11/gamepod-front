@@ -11,11 +11,7 @@ const Signup = ({ handleToken }) => {
 
   const userSignUp = async (e) => {
     e.preventDefault();
-    console.log(username);
-    console.log(email);
-    console.log(password);
-    console.log(file);
-    // Validation basique côté client
+
     if (!username.trim() || !email.trim() || !password.trim() || !file) {
       alert("All fields including an image are required.");
       return;
@@ -36,7 +32,6 @@ const Signup = ({ handleToken }) => {
       handleToken(response.data.token);
       navigate("/");
     } catch (error) {
-      console.log("Erreur lors de l'inscription :", error);
       alert(error.response?.data.message || "Signup failed");
     }
   };
