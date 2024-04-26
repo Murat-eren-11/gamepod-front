@@ -21,7 +21,7 @@ const Signup = ({handleToken}) => {
     formData.append("username", username);
     formData.append("email", email);
     formData.append("password", password);
-    formData.append("picture", file);
+    formData?.append("picture", file);
 
     try {
       const response = await axios.post(
