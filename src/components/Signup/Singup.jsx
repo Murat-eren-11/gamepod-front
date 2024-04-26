@@ -32,7 +32,7 @@ const Signup = ({handleToken}) => {
       handleToken(response.data.token);
       navigate("/");
     } catch (error) {
-      alert(error.response?.data.message || "Signup failed");
+      alert(error.response?.data.message);
     }
   };
 
