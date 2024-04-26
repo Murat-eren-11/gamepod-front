@@ -114,7 +114,7 @@ const Game = ({ token }) => {
         <img
           src={game.background_image}
           alt={game.name}
-          className="w-96 h-80 object-cover"
+          className="w-96 h-80 object-cover rounded-sm"
         />
         <div className="flex flex-col">
           <div className="flex flex-row gap-20 ml-20 mb-20">
