@@ -1,7 +1,7 @@
-import { useState, useEffect } from "react";
+import {useState, useEffect} from "react";
 import axios from "axios";
 
-const Comments = ({ id, token }) => {
+const Comments = ({id, token}) => {
   const [comments, setComments] = useState([]);
   const [newComment, setNewComment] = useState("");
 
@@ -9,10 +9,7 @@ const Comments = ({ id, token }) => {
     const fetchComments = async () => {
       try {
         const response = await axios.get(
-          `${import.meta.env.VITE_API_URL}/comments/${id}`,
-          {
-            headers: { Authorization: `Bearer ${token}` },
-          }
+          `${import.meta.env.VITE_API_URL}/comments/${id}`
         );
         setComments(response.data);
       } catch (error) {
@@ -26,8 +23,8 @@ const Comments = ({ id, token }) => {
     try {
       const response = await axios.post(
         `${import.meta.env.VITE_API_URL}/comments/${id}`,
-        { text: newComment },
-        { headers: { Authorization: `Bearer ${token}` } }
+        {text: newComment},
+        {headers: {Authorization: `Bearer ${token}`}}
       );
       setComments([...comments, response.data]);
       setNewComment("");
