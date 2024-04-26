@@ -32,9 +32,6 @@ const Game = ({ token }) => {
           setIsInCollection(collectionRes.data.some((item) => item.id === id));
           setIsInTodoList(todoRes.data.some((item) => item.id === id));
         }
-
-        setIsInCollection(collectionRes.data.some((item) => item.id === id));
-        setIsInTodoList(todoRes.data.some((item) => item.id === id));
       } catch (error) {
         console.error("Error fetching game details and status:", error.message);
       }
