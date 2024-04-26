@@ -29,7 +29,7 @@ const Comments = ({ id, token }) => {
         { text: newComment },
         { headers: { Authorization: `Bearer ${token}` } }
       );
-      setComments([...comments, response.data]); // Assume the response includes the new comment
+      setComments([...comments, response.data]);
       setNewComment("");
     } catch (error) {
       alert("Failed to post comment");

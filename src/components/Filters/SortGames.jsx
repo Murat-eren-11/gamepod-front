@@ -1,8 +1,8 @@
 import React, { useState } from "react";
 
 const SortGames = ({ onSortChange }) => {
-  const [sortField, setSortField] = useState("name"); // 'name' ou 'released'
-  const [sortOrder, setSortOrder] = useState("asc"); // 'asc' ou 'desc'
+  const [sortField, setSortField] = useState("name");
+  const [sortOrder, setSortOrder] = useState("asc");
 
   const handleSortChange = (field) => {
     const isAscending = sortField === field && sortOrder === "asc";
