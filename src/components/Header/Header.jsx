@@ -1,9 +1,9 @@
-import { Link } from "react-router-dom";
+import {Link} from "react-router-dom";
 import axios from "axios";
-import { useState, useEffect } from "react";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import {useState, useEffect} from "react";
+import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 
-const Header = ({ handleToken, token }) => {
+const Header = ({handleToken, token}) => {
   const [username, setUsername] = useState("");
   const [avatar, setAvatar] = useState({});
 
@@ -14,7 +14,7 @@ const Header = ({ handleToken, token }) => {
           `${import.meta.env.VITE_API_URL}/gameuser`,
           {
             headers: {
-              Authorization: `Bearer ${token}`, // Assurez-vous que c'est la façon correcte dont votre backend attend le token
+              Authorization: `Bearer ${token}`,
             },
           }
         );
@@ -27,9 +27,9 @@ const Header = ({ handleToken, token }) => {
     };
 
     if (token) {
-      fetchUser(); // Exécutez fetchUser seulement si token est disponible
+      fetchUser();
     }
-  }, [token]); // Exécutez useEffect quand token change
+  }, [token]);
 
   return (
     <header className="h-20 border-solid border-b-2 border-red-600">

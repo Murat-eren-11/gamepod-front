@@ -1,8 +1,8 @@
 import axios from "axios";
-import { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import {useState} from "react";
+import {useNavigate} from "react-router-dom";
 
-const Signup = ({ handleToken }) => {
+const Signup = ({handleToken}) => {
   const [username, setUsername] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -12,8 +12,8 @@ const Signup = ({ handleToken }) => {
   const userSignUp = async (e) => {
     e.preventDefault();
 
-    if (!username.trim() || !email.trim() || !password.trim() || !file) {
-      alert("All fields including an image are required.");
+    if (!username.trim() || !email.trim() || !password.trim()) {
+      alert("All fields are required.");
       return;
     }
 
@@ -27,7 +27,7 @@ const Signup = ({ handleToken }) => {
       const response = await axios.post(
         `${import.meta.env.VITE_API_URL}/signup`,
         formData,
-        { headers: { "Content-Type": "multipart/form-data" } }
+        {headers: {"Content-Type": "multipart/form-data"}}
       );
       handleToken(response.data.token);
       navigate("/");
